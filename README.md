@@ -4,27 +4,28 @@ Watch a graph (i.e. a network) evolve in time like a classical mechanical system
 
 ## Usage
 
-To see the program in action with a simple example, generate a random graph as follows.
-```
-$ ipython
->>> import graphevolution as ge
->>> g = ge.random()
->>> g.evolve()
+To see the program in action with a simple example, generate a random graph as follows (in Python).
+```python
+import graphevolution as ge
+g = ge.random()
+g.evolve()
 ```
 The last line displays a matplotlib animation.
 
 To see your own graph evolve, you can initiate a Graph object by a list of edges, where each edge is a tuple of 2 nodes. A node can be any python object; they are just labels. For example:
+```python
+import graphevolution as ge
+g = ge.Graph()
+edges = [('A', 'B'), ('B', 'C'), ('B', 'D')]
+g.set_by_edges(edges)
+g.evolve()
 ```
-$ ipython
->>> import graphevolution as ge
->>> g = ge.Graph()
->>> edges = [('A', 'B'), ('B', 'C'), ('B', 'D')]
->>> g.set_by_edges(edges)
->>> g.evolve()
+Once the graph is in a nice configuration, you can output it in LaTeX form. For instance, with the example above,
+```python
+g.latex()
 ```
-Once the graph is in a nice configuration, you can output it in LaTeX form.
+outputs
 ```
->>> g.latex()
 $$
 \begin{tikzpicture}
 \tikzset{dot/.style={draw, circle, fill, inner sep=1pt},}
@@ -39,11 +40,11 @@ $$
 $$
 ```
 
-Just copy-paste the output in a LaTeX document with `\usepackage{tikz}` in the preamble.
+Then, copy and paste this into a LaTeX document with `\usepackage{tikz}` in the preamble.
 
 
-The `evolve` function has many parameters; its signature is:
-```
+The `evolve` function has many parameters; its signature is
+```python
 Graph.evolve(friction=0.5, tension=1.0, repulsion=1.0, magnetic=False,
    dt=0.01, nodesize=5, edgesize=1, repeat=10, dim=4):
 ```
