@@ -4,80 +4,95 @@ import matplotlib.animation as animation
 
 class Graph():
     """
-    A finite directed weighted graph.
+    A finite directed graph in motion in a 2D plane.
 
-    Nodes:  They are implemented by the dictionary `nodes`, whose keys
-            are labels for the nodes and whose values are weigths.
-    Edges:  They are implemented by the set `edges` which consists of
-            tuples of two keys in `nodes`.
+    The nodes are implemented by a dictionary `nodes`, whose keys
+    are labels for the nodes and whose values are the coordinates of
+    the nodes (in the plane) plus their velocities. Each value is a
+    two by two numpy array: the first row are the coordinates of the
+    node and the second the coordinates of its velocity.
+
+    The edges are implemented by a set `edges` which consists of tuples of
+    two keys in `nodes`.
 
     Example
     ========
-    >>> from graphevolution import Graph
-    >>> nodes = {'A': 6, 'B': 4, 'C': 5, 'D': 1}
-    >>> edges = set([('A', 'B'), ('B', 'C'), ('B', 'D')])
-    >>> g = Graph(nodes, edges)
-    >>> g.info()
-    <class 'graphevolution.Graph'>
-
-    4 nodes
-    3 edges
-
-    Nodes:
-    A  :  6
-    B  :  4
-    C  :  5
-    D  :  1
-
-    Edges:
-    ('B', 'D') ('B', 'C') ('A', 'B')
+    >>> import numpy as np
+    >>> import graphevolution as ge
+    >>>
+    >>> nodeA = np.array([[1, 2], [0, 1]])
+    >>> nodeB = np.array([[-1, 0], [3, 2]])
+    >>> nodeC = np.array([[2, 1], [2, 2]])
+    >>> nodes = {'A': nodeA, 'B': nodeB, 'C': nodeC}
+    >>> edges = set([('A', 'B'), ('B', 'C')])
+    >>> g = ge.Graph(nodes, edges)
     """
 
     def __init__(self, nodes={}, edges=set()):
         self.nodes = nodes  # dict
         self.edges = edges  # set
 
-    def set_by_sets(self, nodes, edges):
-        self.nodes = {n: np.vstack([np.random.normal(0, 0.5, 2), np.zeros(2)])
-                        for n in nodes}
-        self.edges = edges
-
     def set_by_edges(self, edges):
+        """
+        Initiate the nodes and edges with random coordinates and zero velocities
+        by passing only a set of edges. The set `edges` can be any set of
+        2-tuples. The elements of these tuples will be the labels of the nodes.
+
+        Parameters
+        ==========
+        edges: a set of 2-tuples.
+
+        Example
+        =======
+        >>> import graphevolution as ge
+        >>> edges = set([('A', 'B'), ('B', 'C'), ('B', 'D')])
+        >>> g = ge.Graph()
+        >>> g.set_by_edges(edges)
+        >>> g.evolve()
+        """
         nodes_set = set()
         for e in edges:
             nodes_set.add(e[0])
             nodes_set.add(e[1])
-        self.nodes = {n: np.vstack([np.random.normal(0, 0.5, 2), np.zeros(2)])
+        self.nodes = {n: np.vstack([np.random.randn(2), np.zeros(2)])
                         for n in nodes_set}
-        self.edges = edges
-
-    def random(self, n_edges, n_nodes):
-        edges = set()
-        while len(edges) < n_edges:
-            n1 = 0; n2 = 0
-            while n1 == n2:
-                n1 = np.random.choice(range(n_nodes))
-                n2 = np.random.choice(range(n_nodes))
-            if (n2, n1) not in edges:
-                edges.add((n1, n2))
-        self.set_by_edges(edges)
+        self.edges = set(edges)
 
     def reset(self):
-        self.nodes = {n: np.vstack([np.random.normal(0, 0.5, 2), np.zeros(2)])
+        """
+        Reset the coordinates of the nodes randomly and set the velocities to
+        zero.
+        """
+        self.nodes = {n: np.vstack([np.random.randn(2), np.zeros(2)])
                         for n in self.nodes}
 
-    def info(self):
+    def info(self, listnodes=True, listedges=True):
+        """
+        Print basic info of the Graph on the terminal.
+
+        Parameters
+        ==========
+        listnodes: If True, will print all labels of the nodes.
+        listedges: If True, will print all edges.
+        """
         print("<class 'graphevolution.Graph'>\n")
         print("{} nodes".format(len(self.nodes)))
         print("{} edges\n".format(len(self.edges)))
-        print("Nodes:")
-        for k, v in self.nodes.items():
-            print(k, " : ", v)
+        if listnodes:
+            print("Nodes:")
+            for k, v in self.nodes.items():
+                print(k, end=', ')
         print()
-        print("Edges:")
-        print(*self.edges)
+        if listedges:
+            print("Edges:")
+            print(*self.edges)
 
     def latex(self):
+        """
+        Output a LaTeX version of the Graph.
+        Copy-paste to your LaTeX document with the `tikz` package   in your
+        preamble.
+        """
         print("$$")
         print("\\begin{tikzpicture}")
         print("\\tikzset{dot/.style={draw, circle, fill, inner sep=1pt},}")
@@ -94,6 +109,21 @@ class Graph():
                 tension=1.0,
                 repulsion=1.0,
                 magnetic=False):
+        """
+        Evolve the graph by one step. The nodes are interpreted as masses of
+        equal weights, the edges as springs and they evolve according to the
+        usual laws of classical mechanics.
+
+        Parameters
+        ==========
+        dt: Time interval to integrate the equation of motion.
+        friction: The friction coefficient for the nodes.
+        tension: The tension in the edges.
+        repulsion: If positive, each node has a repulsive ``1 / r**2`` force
+            which acts on the other nodes.
+        magnetic: If positive, the nodes tend to align in the North-South axis
+            and pointing to the North with respect to their orientation.
+        """
         F = {n : np.zeros(2) for n in self.nodes}
         for n, c in self.nodes.items():
             for e in self.edges:
@@ -131,7 +161,7 @@ class Graph():
             ax.plot(p.T[0], p.T[1], 'k')
         plt.show()
 
-    def anim(self,
+    def evolve(self,
                 dim=4,
                 dt=0.01,
                 friction=0.5,
@@ -141,6 +171,23 @@ class Graph():
                 edgesize=1,
                 magnetic=False,
                 repeat=10):
+        """
+        Let the graph evolve in time according to the laws of classical
+        mechanics. The nodes are interpreted as masses of equal weights and the
+        edges as springs.
+
+        The function displays a matplotlib animation.
+
+        Parameters
+        ==========
+        dt: Time interval to integrate the equation of motion.
+        friction: The friction coefficient for the nodes.
+        tension: The tension in the edges.
+        repulsion: If positive, each node has a repulsive ``1 / r**2`` force
+            which acts on the other nodes.
+        magnetic: If positive, the nodes tend to align in the North-South axis
+            and pointing to the North with respect to their orientation.
+        """
         L = list(self.edges)
 
         fig, ax = plt.subplots()
@@ -181,8 +228,20 @@ class Graph():
 
         plt.show()
 
-def example(e=20, n=10, d=4):
-    G = Graph()
-    G.random(e, n)
-    G.anim(dim=d)
-    return G
+
+def random(n_edges=20, n_nodes=10):
+    """
+    Return a Graph object with `n_nodes` nodes and `n_edges` edges set randomly.
+    The coordinates of the nodes are random and the velocities are zero.
+    """
+    edges = set()
+    while len(edges) < n_edges:
+        n1 = 0; n2 = 0
+        while n1 == n2:
+            n1 = np.random.choice(range(n_nodes))
+            n2 = np.random.choice(range(n_nodes))
+        if (n2, n1) not in edges:
+            edges.add((n1, n2))
+    g = Graph()
+    g.set_by_edges(edges)
+    return g
