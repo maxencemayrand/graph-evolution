@@ -2,6 +2,8 @@
 
 Watch a graph (i.e. a network) evolve in time like a classical mechanical system. The nodes are interpreted as masses endowed with 1/r^2 repulsive forces and the edges as attractive springs. By letting the graph move according to the usual laws of physics and with a bit a friction, the graph stabilizes into a nice equilibrium position which can be used to have a visually attractive display of the graph. There is a function to output the final result in LaTeX form.
 
+You can see videos in the `examples` directory.
+
 ## Usage
 
 To see the program in action with a simple example, generate a random graph as follows (in Python).
