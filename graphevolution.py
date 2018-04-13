@@ -231,6 +231,15 @@ class Graph():
 
         return ani
 
+    def copy(self):
+        """
+        Return a copy of the Graph
+        """
+        nodes = self.nodes.copy()
+        edges = self.edges.copy()
+        g = Graph(nodes, edges)
+        return g
+
 
 def random(n_edges=20, n_nodes=10):
     """
