@@ -4,23 +4,29 @@ Watch a graph (i.e. a network) evolve in time like a classical mechanical system
 
 You can see videos in the `examples` directory.
 
+![Example](./examples/ex2.gif)
+
 ## Usage
 
 To see the program in action with a simple example, generate a random graph as follows (in Python).
 ```python
 import graphevolution as ge
+import matplotlib.pyplot as plt
 g = ge.random()
 g.evolve()
+plt.show()
 ```
 The last line displays a matplotlib animation.
 
 To see your own graph evolve, you can initiate a Graph object by a list of edges, where each edge is a tuple of 2 nodes. A node can be any python object; they are just labels. For example:
 ```python
 import graphevolution as ge
+import matplotlib.pyplot as plt
 g = ge.Graph()
 edges = [('A', 'B'), ('B', 'C'), ('B', 'D')]
 g.set_by_edges(edges)
 g.evolve()
+plt.show()
 ```
 Once the graph is in a nice configuration, you can output it in LaTeX form. For instance, with the example above,
 ```python
@@ -48,7 +54,7 @@ Then, copy and paste this into a LaTeX document with `\usepackage{tikz}` in the 
 The `evolve` function has many parameters; its signature is
 ```python
 Graph.evolve(friction=0.5, tension=1.0, repulsion=1.0, magnetic=False,
-   dt=0.01, nodesize=5, edgesize=1, repeat=10, dim=4):
+   dt=0.01, dim=4, nodesize=5, edgesize=1, repeat=10, interval=1, frames=500)
 ```
 The most important ones are:
 

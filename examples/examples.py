@@ -48,4 +48,5 @@ edges = [
 
 g = ge.Graph()
 g.set_by_edges(edges)
-g.evolve(dim=10)
+a = g.evolve(dim=10)
+a.save('ex4.gif', writer='imagemagick', fps=60)

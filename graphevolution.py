@@ -170,7 +170,9 @@ class Graph():
                 nodesize=5,
                 edgesize=1,
                 magnetic=False,
-                repeat=10):
+                repeat=10,
+                interval=1,
+                frames=500):
         """
         Let the graph evolve in time according to the laws of classical
         mechanics. The nodes are interpreted as masses of equal weights and the
@@ -222,11 +224,12 @@ class Graph():
 
         ani = animation.FuncAnimation(fig,
                                       update,
-                                      interval=1,
+                                      interval=interval,
                                       init_func=init,
+                                      frames=frames,
                                       blit=True)
 
-        plt.show()
+        return ani
 
 
 def random(n_edges=20, n_nodes=10):
