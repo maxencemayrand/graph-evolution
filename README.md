@@ -6,7 +6,7 @@ Watch a graph (i.e. a network) evolve in time like a classical mechanical system
 
 ## Example
 
-See [this notebook](https://nbviewer.jupyter.org/github/maxencemayrand/graph-evolution/blob/master/nilpotent-orbits.ipynb) for an example where `graphevolution` is used to get a neat image of a partially ordered set that occurs naturally in Lie theory.
+See [this notebook](https://nbviewer.jupyter.org/github/maxencemayrand/graph-evolution/blob/master/nilpotent-orbits.ipynb) for an example where `graphevolution` is used to get a neat image of a partially ordered set that occurs naturally in combinatorics (and Lie theory).
 
 ## Usage
 
