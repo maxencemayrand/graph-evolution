@@ -4,6 +4,10 @@ Watch a graph (i.e. a network) evolve in time like a classical mechanical system
 
 ![Example](./examples/ex2.gif)
 
+## Example
+
+See [this notebook](./nilpotent-orbits.ipynb) for an example where `graphevolution` is used to get a neat image of a partially ordered set that occurs naturally in Lie theory.
+
 ## Usage
 
 To see the program in action with a simple example, generate a random graph as follows (in Python).
